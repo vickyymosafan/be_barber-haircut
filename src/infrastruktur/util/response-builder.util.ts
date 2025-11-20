@@ -12,7 +12,7 @@ export interface ResponseError {
   status: 'error';
   pesan: string;
   kode?: string;
-  detail?: any;
+  detail?: unknown;
 }
 
 /**
@@ -41,13 +41,21 @@ export class ResponseBuilder {
    * @param detail - Detail tambahan error (optional)
    * Alasan: Memastikan semua error response memiliki format yang sama
    */
-  static error(pesan: string, kode?: string, detail?: any): ResponseError {
-    return {
+  static error(pesan: string, kode?: string, detail?: unknown): ResponseError {
+    const response: ResponseError = {
       status: 'error',
       pesan,
-      ...(kode && { kode }),
-      ...(detail && { detail }),
     };
+
+    if (kode) {
+      response.kode = kode;
+    }
+
+    if (detail !== undefined) {
+      response.detail = detail;
+    }
+
+    return response;
   }
 
   /**

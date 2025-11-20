@@ -93,7 +93,7 @@ export class ServicePengguna {
 
     // Remove password hash dari response
     // Alasan: Security - jangan expose password hash
-    delete (pengguna as any).passwordHash;
+    delete (pengguna as unknown as Record<string, unknown>).passwordHash;
 
     return {
       pengguna,

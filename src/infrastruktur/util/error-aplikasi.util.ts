@@ -7,7 +7,7 @@ export class ErrorAplikasi extends Error {
     public kodeError: string,
     public pesanError: string,
     public statusHttp: number = 500,
-    public detail?: any
+    public detail?: unknown
   ) {
     super(pesanError);
     this.name = 'ErrorAplikasi';
@@ -56,7 +56,7 @@ export const ERROR_CODES = {
  * Alasan: Menghindari duplikasi code saat throw error
  */
 export class ErrorFactory {
-  static tokenTidakValid(detail?: any): ErrorAplikasi {
+  static tokenTidakValid(detail?: unknown): ErrorAplikasi {
     return new ErrorAplikasi(ERROR_CODES.AUTH_001, 'Token tidak valid atau expired', 401, detail);
   }
 
@@ -88,7 +88,7 @@ export class ErrorFactory {
     return new ErrorAplikasi(ERROR_CODES.BOOKING_004, 'Status booking tidak dapat diubah', 400);
   }
 
-  static pembayaranGagal(detail?: any): ErrorAplikasi {
+  static pembayaranGagal(detail?: unknown): ErrorAplikasi {
     return new ErrorAplikasi(ERROR_CODES.PAYMENT_001, 'Pembayaran gagal', 400, detail);
   }
 
@@ -104,15 +104,15 @@ export class ErrorFactory {
     return new ErrorAplikasi(ERROR_CODES.INVOICE_002, 'Invoice tidak ditemukan', 404);
   }
 
-  static validasiGagal(pesan: string, detail?: any): ErrorAplikasi {
+  static validasiGagal(pesan: string, detail?: unknown): ErrorAplikasi {
     return new ErrorAplikasi(ERROR_CODES.VALIDATION_001, pesan, 400, detail);
   }
 
-  static databaseError(pesan = 'Error koneksi database', detail?: any): ErrorAplikasi {
+  static databaseError(pesan = 'Error koneksi database', detail?: unknown): ErrorAplikasi {
     return new ErrorAplikasi(ERROR_CODES.DATABASE_001, pesan, 500, detail);
   }
 
-  static internalError(pesan = 'Terjadi kesalahan pada server', detail?: any): ErrorAplikasi {
+  static internalError(pesan = 'Terjadi kesalahan pada server', detail?: unknown): ErrorAplikasi {
     return new ErrorAplikasi(ERROR_CODES.INTERNAL_001, pesan, 500, detail);
   }
 }

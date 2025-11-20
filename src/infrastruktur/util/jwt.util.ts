@@ -27,10 +27,12 @@ export class JwtUtil {
    */
   static generateToken(payload: Omit<PayloadToken, 'iat' | 'exp'>): string {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const token = jwt.sign(payload, config.jwt.secret, {
-        expiresIn: config.jwt.expiresIn,
-      } as any);
+      const token = jwt.sign(
+        payload,
+        config.jwt.secret,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        { expiresIn: config.jwt.expiresIn } as any
+      );
       return token;
     } catch (error) {
       throw ErrorFactory.internalError('Gagal generate JWT token', error);
@@ -126,10 +128,12 @@ export class JwtUtil {
     expiresIn = '7d'
   ): string {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const token = jwt.sign(payload, config.jwt.secret, {
-        expiresIn,
-      } as any);
+      const token = jwt.sign(
+        payload,
+        config.jwt.secret,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        { expiresIn } as any
+      );
       return token;
     } catch (error) {
       throw ErrorFactory.internalError('Gagal generate refresh token', error);
