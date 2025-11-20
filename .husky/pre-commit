@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd backend
+
+# Jalankan type check untuk memastikan tidak ada error TypeScript
+npm run type-check
+
+# Jalankan linting untuk memastikan code quality
+npm run lint
+
+# Jalankan format check untuk memastikan code formatting konsisten
+npm run format:check
