@@ -9,4 +9,5 @@ export * from './database';
 // Utilities
 export * from './util';
 
-// Middleware akan di-export setelah dibuat di task 4
+// Middleware
+export * from './middleware';
