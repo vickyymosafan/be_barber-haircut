@@ -1,20 +1,129 @@
-import { AppDataSource } from './data-source';
-import { User } from './entity/User';
+import 'reflect-metadata';
+import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import { dapatkanKoneksiDatabase } from '@infrastruktur/database';
+import { errorHandlerMiddleware } from '@infrastruktur/middleware';
+import { config } from '@konfigurasi/environment';
 
-AppDataSource.initialize()
-  .then(async () => {
-    console.log('Inserting a new user into the database...');
-    const user = new User();
-    user.firstName = 'Timber';
-    user.lastName = 'Saw';
-    user.age = 25;
-    await AppDataSource.manager.save(user);
-    console.log('Saved a new user with id: ' + user.id);
+// Import route setup functions
+import { setupRutePengguna } from '@domain/pengguna/rute';
+import { setupRuteBarber, setupRuteAdminBarber } from '@domain/barber/rute';
+import { setupRuteLayanan, setupRuteAdminLayanan } from '@domain/layanan/rute';
+import { setupRuteBooking, setupRuteAdminBooking } from '@domain/booking/rute';
+import { setupRutePembayaran } from '@domain/pembayaran/rute';
+import { setupRuteInvoice } from '@domain/invoice/rute';
 
-    console.log('Loading users from the database...');
-    const users = await AppDataSource.manager.find(User);
-    console.log('Loaded users: ', users);
+/**
+ * Create Express application
+ * Alasan: Main application setup untuk serverless deployment
+ */
+const app: Application = express();
 
-    console.log('Here you can setup and run express / fastify / any other framework.');
+/**
+ * Middleware Setup
+ * Alasan: Configure middleware untuk security, parsing, dan error handling
+ */
+
+// Security middleware
+app.use(helmet());
+
+// CORS configuration
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    credentials: true,
   })
-  .catch(error => console.log(error));
+);
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+/**
+ * Database Connection Middleware
+ * Alasan: Initialize database connection on first request (serverless-friendly)
+ */
+app.use(async (_req: Request, _res: Response, next) => {
+  try {
+    await dapatkanKoneksiDatabase();
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    next(error);
+  }
+});
+
+/**
+ * Health Check Endpoint
+ * Alasan: Untuk monitoring dan health checks
+ */
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: config.app.nodeEnv,
+  });
+});
+
+/**
+ * API Routes Registration
+ * Alasan: Register semua domain routes
+ */
+
+// Authentication & User routes
+app.use('/api/auth', setupRutePengguna());
+
+// Barber routes
+app.use('/api/barber', setupRuteBarber());
+app.use('/api/admin/barber', setupRuteAdminBarber());
+
+// Layanan routes
+app.use('/api/layanan', setupRuteLayanan());
+app.use('/api/admin/layanan', setupRuteAdminLayanan());
+
+// Booking routes
+app.use('/api/booking', setupRuteBooking());
+app.use('/api/admin/booking', setupRuteAdminBooking());
+
+// Pembayaran routes
+app.use('/api/pembayaran', setupRutePembayaran());
+
+// Invoice routes
+app.use('/api/invoice', setupRuteInvoice());
+
+/**
+ * 404 Handler
+ * Alasan: Handle routes yang tidak ditemukan
+ */
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({
+    status: 'error',
+    pesan: 'Endpoint tidak ditemukan',
+  });
+});
+
+/**
+ * Global Error Handler
+ * Alasan: Catch semua errors dan return consistent response
+ */
+app.use(errorHandlerMiddleware);
+
+/**
+ * Export app untuk Vercel serverless
+ * Alasan: Vercel membutuhkan export default untuk serverless functions
+ */
+export default app;
+
+/**
+ * Local Development Server
+ * Alasan: Conditional listen hanya untuk local development
+ */
+if (config.app.nodeEnv === 'development') {
+  const PORT = config.app.port || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📝 Environment: ${config.app.nodeEnv}`);
+    console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  });
+}
