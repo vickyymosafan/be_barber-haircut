@@ -1,0 +1,2 @@
+# Folder ini untuk menyimpan migration files TypeORM
+# Migration files akan di-generate otomatis oleh TypeORM CLI
