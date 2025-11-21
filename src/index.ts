@@ -55,6 +55,28 @@ app.use(async (_req: Request, _res: Response, next) => {
 });
 
 /**
+ * Root Endpoint
+ * Alasan: Informasi dasar API
+ */
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    name: 'Barber Haircut API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth/*',
+      barber: '/api/barber',
+      layanan: '/api/layanan',
+      booking: '/api/booking',
+      pembayaran: '/api/pembayaran',
+      invoice: '/api/invoice',
+      admin: '/api/admin/*',
+    },
+  });
+});
+
+/**
  * Health Check Endpoint
  * Alasan: Untuk monitoring dan health checks
  */

@@ -1,7 +1,12 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from '@konfigurasi/environment';
-import { Pengguna } from '../../domain/pengguna/entitas/pengguna.entitas';
+import { Pengguna } from '@domain/pengguna/entitas/pengguna.entitas';
+import { Barber } from '@domain/barber/entitas/barber.entitas';
+import { Layanan } from '@domain/layanan/entitas/layanan.entitas';
+import { Booking } from '@domain/booking/entitas/booking.entitas';
+import { Pembayaran } from '@domain/pembayaran/entitas/pembayaran.entitas';
+import { Invoice } from '@domain/invoice/entitas/invoice.entitas';
 
 /**
  * Singleton instance untuk database connection
@@ -25,10 +30,7 @@ export async function dapatkanKoneksiDatabase(): Promise<DataSource> {
   dataSource = new DataSource({
     type: 'postgres',
     url: config.database.url,
-    entities: [
-      Pengguna,
-      // Entities lain akan ditambahkan saat domain dibuat
-    ],
+    entities: [Pengguna, Barber, Layanan, Booking, Pembayaran, Invoice],
     migrations: ['src/infrastruktur/database/migrasi/*.ts'],
     synchronize: config.app.nodeEnv === 'development',
     logging: config.app.nodeEnv === 'development',

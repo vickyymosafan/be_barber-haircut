@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn, Unique, Index } from 'typeorm';
-import { BaseEntitas } from '@infrastruktur/database';
+import { BaseEntitas } from '@infrastruktur/database/base-entitas';
 import { Pengguna } from '@domain/pengguna/entitas/pengguna.entitas';
 import { Barber } from '@domain/barber/entitas/barber.entitas';
 import { Layanan } from '@domain/layanan/entitas/layanan.entitas';

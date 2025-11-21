@@ -1,5 +1,5 @@
 import { Entity, Column, OneToMany } from 'typeorm';
-import { BaseEntitas } from '@infrastruktur/database';
+import { BaseEntitas } from '@infrastruktur/database/base-entitas';
 
 /**
  * Entitas Layanan

@@ -34,7 +34,7 @@
     "typeorm": "0.3.27"
   },
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
     "start": "node build/index.js",
     "typeorm": "typeorm-ts-node-commonjs",
